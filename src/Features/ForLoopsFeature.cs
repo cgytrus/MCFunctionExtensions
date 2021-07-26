@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace MCFunctionExtensions.Features {
@@ -14,7 +15,7 @@ namespace MCFunctionExtensions.Features {
         
         private static void ProcessLine(ICollection<string> newLines, string line, IReadOnlyList<string> args,
             int lineIndex) {
-            if(!line.StartsWith("execute")) {
+            if(!line.StartsWith("execute", StringComparison.InvariantCulture)) {
                 newLines.Add(line);
                 return;
             }
