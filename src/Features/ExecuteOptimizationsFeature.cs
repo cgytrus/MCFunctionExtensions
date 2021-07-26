@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace MCFunctionExtensions.Features {
     public class ExecuteOptimizationsFeature : IFeature {
         public void Use(IReadOnlyList<string> readLines, List<string> newLines, Options options) {
             const string executeRun = "execute run ";
-            newLines.AddRange(readLines.Select(line => line.StartsWith(executeRun, StringComparison.InvariantCulture) ? line.Substring(executeRun.Length) : line));
+            // ReSharper disable once ForCanBeConvertedToForeach
+            for(int i = 0; i < readLines.Count; i++) {
+                string line = readLines[i];
+                while(line.StartsWith(executeRun, StringComparison.InvariantCulture))
+                    line = line.Substring(executeRun.Length);
+                newLines.Add(line);
+            }
         }
     }
 }
