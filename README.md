@@ -2,9 +2,12 @@
 Some extensions to the vanilla functions syntax
 
 ## Features
+- Constants
 - Self namespaces
 - Inline functions
 - Else statements
+- For loops
+- Execute optimization (removes 'execute run')
 
 ## TODO
 *features ending with a question mark are ones i'm not sure of*
