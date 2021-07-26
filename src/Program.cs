@@ -10,18 +10,20 @@ namespace MCFunctionExtensions {
     [Flags]
     public enum Feature {
         None = 0,
-        All = 0b111111,
+        All = 0b1111111,
         ElseStatements = 1,
         SelfNamespace = 1 << 1,
         InlineFunctions = 1 << 2,
         ForLoops = 1 << 3,
         ExecuteOptimizations = 1 << 4,
-        RecursiveExecuteCompilation = 1 << 5
+        RecursiveExecuteCompilation = 1 << 5,
+        Constants = 1 << 6
     }
     
     internal static class Program {
         private static readonly IReadOnlyDictionary<Feature, IFeature> features =
             new Dictionary<Feature, IFeature> {
+                { Feature.Constants, new ConstantsFeature() },
                 { Feature.SelfNamespace, new SelfNamespaceFeature() },
                 { Feature.InlineFunctions, new InlineFunctionsFeature() },
                 { Feature.ElseStatements, new ElseStatementsFeature() },
