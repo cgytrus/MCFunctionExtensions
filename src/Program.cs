@@ -10,11 +10,12 @@ namespace MCFunctionExtensions {
     [Flags]
     public enum Feature {
         None = 0,
-        All = 0b1111,
+        All = 0b11111,
         ElseStatements = 1,
         SelfNamespace = 1 << 1,
         InlineFunctions = 1 << 2,
-        ForLoops = 1 << 3
+        ForLoops = 1 << 3,
+        ExecuteOptimizations = 1 << 4
     }
     
     internal static class Program {
@@ -23,7 +24,8 @@ namespace MCFunctionExtensions {
                 { Feature.SelfNamespace, new SelfNamespaceFeature() },
                 { Feature.InlineFunctions, new InlineFunctionsFeature() },
                 { Feature.ElseStatements, new ElseStatementsFeature() },
-                { Feature.ForLoops, new ForLoopsFeature() }
+                { Feature.ForLoops, new ForLoopsFeature() },
+                { Feature.ExecuteOptimizations, new ExecuteOptimizationsFeature() }
             };
         
         private static void Main(string[] args) {
