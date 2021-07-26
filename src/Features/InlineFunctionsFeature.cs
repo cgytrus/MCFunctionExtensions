@@ -37,6 +37,7 @@ namespace MCFunctionExtensions.Features {
                     if(line == "}") {
                         if(inlineDepth <= 0) {
                             File.WriteAllLines(functionPath, Program.CompileFunction(options, inlineFunctionLines));
+                            index--;
                             break;
                         }
 
