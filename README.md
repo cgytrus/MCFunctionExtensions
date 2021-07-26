@@ -1,4 +1,4 @@
-﻿# Minecraft Function Extensions
+# Minecraft Function Extensions
 Some extensions to the vanilla functions syntax
 
 ## Features
@@ -8,6 +8,8 @@ Some extensions to the vanilla functions syntax
 
 ## TODO
 - Libraries?
+- loops
+- function arguments?
 - Writing multiple commands in a line separated with ;
 - idk what else yet but you can suggest your ideas ;)
 
