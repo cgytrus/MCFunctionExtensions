@@ -39,7 +39,7 @@ namespace MCFunctionExtensions.Features {
 
             const string playerName = "ElseStatement";
 
-            string storePart = $"execute store success score {playerName} {Program.InternalObjectiveName}";
+            string storePart = $"store success score {playerName} {Program.InternalObjectiveName}";
 
             if(isPrevExecute) {
                 lines.Add($"scoreboard objectives add {Program.InternalObjectiveName} dummy");
