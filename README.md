@@ -7,10 +7,10 @@ Some extensions to the vanilla functions syntax
 - Else statements
 
 ## TODO
-- Libraries?
-- loops
+*features ending with a question mark are ones i'm not sure of*
 - function arguments?
-- Writing multiple commands in a line separated with ;
+- Libraries?
+- Writing multiple commands in a line separated with ;?
 - idk what else yet but you can suggest your ideas ;)
 
 ## Example
