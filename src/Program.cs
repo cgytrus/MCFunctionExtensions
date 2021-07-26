@@ -21,6 +21,8 @@ namespace MCFunctionExtensions {
     }
     
     internal static class Program {
+        public const string InternalObjectiveName = "mcfunctionext";
+        
         private static readonly IReadOnlyDictionary<Feature, IFeature> features =
             new Dictionary<Feature, IFeature> {
                 { Feature.Constants, new ConstantsFeature() },

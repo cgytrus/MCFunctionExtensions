@@ -37,18 +37,19 @@ namespace MCFunctionExtensions.Features {
             
             bool isNextElse = nextLine?.StartsWith("else", StringComparison.InvariantCulture) ?? false;
 
-            string storageTarget = $"{funcNamespace}:mcfunctionext";
-            const string storagePath = "ElseStatement";
+            const string playerName = "ElseStatement";
 
-            string storePart = $"store success storage {storageTarget} {storagePath} byte 1";
+            string storePart = $"execute store success score {playerName} {Program.InternalObjectiveName}";
 
             if(isPrevExecute) {
-                lines.Add($"data modify storage {storageTarget} {storagePath} set value 0b");
+                lines.Add($"scoreboard objectives add {Program.InternalObjectiveName} dummy");
+                lines.Add($"scoreboard players set {playerName} {Program.InternalObjectiveName} 0");
                 lines.Add($"execute {storePart} {prevLine.Substring(8)}");
             }
-            
+
+            string elseStart = $"execute if score {playerName} {Program.InternalObjectiveName} matches 0";
             string endStore = isNextElse ? $"run execute {storePart} " : "";
-            lines.Add($"execute if data storage {storageTarget} {{{storagePath}:0b}} {endStore}{line.Substring(5)}");
+            lines.Add($"{elseStart} {endStore}{line.Substring(5)}");
 
             return lines;
         }
