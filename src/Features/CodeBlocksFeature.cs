@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace MCFunctionExtensions.Features {
     public abstract class CodeBlocksFeature : IFeature {
@@ -16,18 +17,18 @@ namespace MCFunctionExtensions.Features {
             int startLine;
             int inlineDepth;
             try {
-                if(!IsInlineDeclaration(line, out string trimmedDeclaration)) {
+                if(!IsBlockDeclaration(line, out string trimmedDeclaration)) {
                     newLines.Add(line);
                     return;
                 }
 
-                newLines.Add(line.TrimEnd('{', ' '));
+                AddOriginalLine(line, newLines);
                 startLine = index;
                 inlineDepth = 0;
                 inlineLines.Clear();
                 index++;
                 while(index < readLines.Count)
-                    if(ProcessInlineLine(readLines, inlineLines, options, trimmedDeclaration, ref index,
+                    if(ProcessBlockLine(readLines, inlineLines, options, trimmedDeclaration, ref index,
                         ref inlineDepth))
                         break;
             }
@@ -37,13 +38,13 @@ namespace MCFunctionExtensions.Features {
 
             if(inlineDepth > 0) throw new FunctionExtensionErrorException(startLine + 1, "Braces not closed.");
         }
-        
-        private bool ProcessInlineLine(IReadOnlyList<string> readLines, ICollection<string> inlineLines, Options options,
+
+        private bool ProcessBlockLine(IReadOnlyList<string> readLines, ICollection<string> inlineLines, Options options,
             string trimmedDeclaration, ref int index, ref int inlineDepth) {
             string line = readLines[index++].TrimStart();
 
-            if(IsInlineDeclaration(line, out _)) inlineDepth++;
-            if(IsInlineEnd(line)) {
+            if(IsBlockDeclaration(line, out _)) inlineDepth++;
+            if(IsBlockEnd(line)) {
                 if(inlineDepth <= 0) {
                     BlockEnd(options, inlineLines, trimmedDeclaration);
                     index--;
@@ -59,8 +60,16 @@ namespace MCFunctionExtensions.Features {
 
         protected abstract void BlockEnd(Options options, IEnumerable<string> inlineLines, string trimmedLine);
 
-        protected abstract bool IsInlineDeclaration(string line, out string trimmedLine);
+        protected virtual void AddOriginalLine(string line, ICollection<string> newLines) =>
+            newLines.Add(line.TrimEnd('{').TrimEnd());
 
-        protected virtual bool IsInlineEnd(string line) => line.Trim() == "}";
+        protected virtual bool IsBlockDeclaration(string line, out string trimmedLine) {
+            trimmedLine = line.TrimEnd();
+            bool isBlockDeclaration = trimmedLine.EndsWith("{", StringComparison.InvariantCulture);
+            trimmedLine = trimmedLine.TrimEnd('{').TrimEnd();
+            return isBlockDeclaration;
+        }
+
+        protected virtual bool IsBlockEnd(string line) => line.Trim() == "}";
     }
 }

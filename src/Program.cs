@@ -11,7 +11,7 @@ namespace MCFunctionExtensions {
     [Flags]
     public enum Feature {
         None = 0,
-        All = 0b11111111,
+        All = 0b111111111,
         ElseStatements = 1,
         SelfNamespace = 1 << 1,
         InlineFunctions = 1 << 2,
@@ -19,7 +19,8 @@ namespace MCFunctionExtensions {
         ExecuteOptimizations = 1 << 4,
         RecursiveExecuteCompilation = 1 << 5,
         Constants = 1 << 6,
-        AnonymousFunctions = 1 << 7
+        AnonymousFunctions = 1 << 7,
+        CustomCommands = 1 << 8
     }
     
     internal static class Program {
@@ -30,6 +31,7 @@ namespace MCFunctionExtensions {
 
         private static readonly IReadOnlyDictionary<Feature, IFeature> features =
             new Dictionary<Feature, IFeature> {
+                { Feature.CustomCommands, new CustomCommandsFeature() },
                 { Feature.Constants, new ConstantsFeature() },
                 { Feature.SelfNamespace, new SelfNamespaceFeature() },
                 { Feature.AnonymousFunctions, new AnonymousFunctionsFeature() },

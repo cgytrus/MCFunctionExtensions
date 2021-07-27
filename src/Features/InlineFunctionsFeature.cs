@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace MCFunctionExtensions.Features {
@@ -14,22 +13,13 @@ namespace MCFunctionExtensions.Features {
             File.WriteAllLines(functionPath, Program.CompileFunction(options, inlineLines));
         }
 
-        protected override bool IsInlineDeclaration(string line, out string trimmedLine) =>
-            IsInlineFunctionDeclaration(line, out trimmedLine);
-
-        private static string[] GetFunction(string trimmedLine) => trimmedLine.Split(' ')[^1].Split(':');
-
-        private static bool IsInlineFunctionDeclaration(string line, out string trimmedLine) {
-            trimmedLine = line.TrimEnd();
-            
-            if(!trimmedLine.EndsWith("{", StringComparison.InvariantCulture)) return false;
-            
-            trimmedLine = trimmedLine.TrimEnd('{', ' ');
+        protected override bool IsBlockDeclaration(string line, out string trimmedLine) {
+            if(!base.IsBlockDeclaration(line, out trimmedLine)) return false;
             string[] args = trimmedLine.Split(' ');
-            
             if(args[^2] != "function") return false;
-            
             return args[^1].Split(':').Length == 2;
         }
+
+        private static string[] GetFunction(string trimmedLine) => trimmedLine.Split(' ')[^1].Split(':');
     }
 }

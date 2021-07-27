@@ -5,31 +5,35 @@ namespace MCFunctionExtensions.Features {
     public class AnonymousFunctionsFeature : IFeature {
         public void Use(IReadOnlyList<string> readLines, List<string> newLines, Options options) {
             const string functionCommand = "function";
-            foreach(string line in readLines) {
-                bool isExecute = line.StartsWith("execute", StringComparison.InvariantCulture) ||
-                                 line.StartsWith("else", StringComparison.InvariantCulture);
+            foreach(string line in readLines) ProcessLine(newLines, options, line, functionCommand);
+        }
 
-                string useLine = line;
-                if(isExecute) {
-                    int runIndex = line.IndexOf("run", StringComparison.InvariantCulture);
-                    if(runIndex >= 0) useLine = line[(runIndex + 4)..]; // +4 comes from "run" + a space
-                }
-                
-                if(!useLine.StartsWith(functionCommand, StringComparison.InvariantCulture)) {
-                    newLines.Add(line);
-                    continue;
-                }
+        private static void ProcessLine(ICollection<string> newLines, Options options, string line,
+            string functionCommand) {
+            bool isExecute = line.StartsWith("execute", StringComparison.InvariantCulture) ||
+                             line.StartsWith("else", StringComparison.InvariantCulture);
 
-                int functionIdIndex = functionCommand.Length + 1;
-                string function = functionIdIndex >= line.Length ? "" : useLine[functionIdIndex..].TrimEnd().Trim('{');
-                if(!string.IsNullOrWhiteSpace(function)) {
-                    newLines.Add(line);
-                    continue;
-                }
-
-                string functionId = Program.GetGeneratedFunctionId(options.useNamespace, "anonymous");
-                newLines.Add(line.Replace(functionCommand, $"{functionCommand} {functionId}"));
+            string useLine = line;
+            if(isExecute) {
+                int runIndex = line.IndexOf("run", StringComparison.InvariantCulture);
+                if(runIndex >= 0) useLine = line[(runIndex + 4)..]; // +4 comes from "run" + a space
             }
+
+            if(!useLine.StartsWith(functionCommand, StringComparison.InvariantCulture)) {
+                newLines.Add(line);
+                return;
+            }
+
+            int functionIdIndex = functionCommand.Length + 1;
+            string function = functionIdIndex >= line.Length ? "" :
+                useLine[functionIdIndex..].TrimEnd().TrimEnd('{');
+            if(!string.IsNullOrWhiteSpace(function)) {
+                newLines.Add(line);
+                return;
+            }
+
+            string functionId = Program.GetGeneratedFunctionId(options.useNamespace, "anonymous");
+            newLines.Add(line.Replace(functionCommand, $"{functionCommand} {functionId}"));
         }
     }
 }
