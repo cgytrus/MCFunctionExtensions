@@ -5,9 +5,12 @@ using System.IO;
 namespace MCFunctionExtensions.Features {
     public class InlineFunctionsFeature : CodeBlocksFeature {
         protected override void BlockEnd(Options options, IEnumerable<string> inlineLines, string trimmedLine) {
-            string functionPath =
-                ParseInlineFunctionDeclaration(options.functionsPath, options.useNamespace,
-                    GetFunction(trimmedLine));
+            string[] functionId = GetFunction(trimmedLine);
+            if(functionId[0] != options.useNamespace)
+                throw new FunctionExtensionErrorException(0,
+                    "Tried declaring an inline function not in the current namespace.");
+            string functionPath = Program.GetFunctionPath(options.functionsPath, functionId[1]);
+            Directory.CreateDirectory(Path.GetDirectoryName(functionPath) ?? string.Empty);
             File.WriteAllLines(functionPath, Program.CompileFunction(options, inlineLines));
         }
 
@@ -27,16 +30,6 @@ namespace MCFunctionExtensions.Features {
             if(args[^2] != "function") return false;
             
             return args[^1].Split(':').Length == 2;
-        }
-        
-        private static string ParseInlineFunctionDeclaration(string directory, string useNamespace,
-            IReadOnlyList<string> function) {
-            if(function[0] != useNamespace)
-                throw new FunctionExtensionErrorException(0,
-                    "Tried declaring an inline function not in the current namespace.");
-            string functionName = function[1];
-
-            return Path.Join(directory, $"{functionName}.mcfunction");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 using CommandLine;
@@ -10,23 +11,27 @@ namespace MCFunctionExtensions {
     [Flags]
     public enum Feature {
         None = 0,
-        All = 0b1111111,
+        All = 0b11111111,
         ElseStatements = 1,
         SelfNamespace = 1 << 1,
         InlineFunctions = 1 << 2,
         ForLoops = 1 << 3,
         ExecuteOptimizations = 1 << 4,
         RecursiveExecuteCompilation = 1 << 5,
-        Constants = 1 << 6
+        Constants = 1 << 6,
+        AnonymousFunctions = 1 << 7
     }
     
     internal static class Program {
-        public const string InternalObjectiveName = "mcfunctionext";
+        public const string InternalName = "mcfunctionext";
         
+        private static ulong _globalFunctionId;
+
         private static readonly IReadOnlyDictionary<Feature, IFeature> features =
             new Dictionary<Feature, IFeature> {
                 { Feature.Constants, new ConstantsFeature() },
                 { Feature.SelfNamespace, new SelfNamespaceFeature() },
+                { Feature.AnonymousFunctions, new AnonymousFunctionsFeature() },
                 { Feature.InlineFunctions, new InlineFunctionsFeature() },
                 { Feature.ElseStatements, new ElseStatementsFeature() },
                 { Feature.ForLoops, new ForLoopsFeature() },
@@ -64,5 +69,11 @@ namespace MCFunctionExtensions {
 
             return newLines;
         }
+
+        public static string GetGeneratedFunctionId(string useNamespace, string featureName) =>
+            $"{useNamespace}:z__{InternalName}/{featureName}/generated_{_globalFunctionId++.ToString(CultureInfo.InvariantCulture)}";
+
+        public static string GetFunctionPath(string directory, string functionName) =>
+            Path.Join(directory, $"{Path.Join(functionName.Split('/'))}.mcfunction");
     }
 }

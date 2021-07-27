@@ -4,6 +4,7 @@ Some extensions to the vanilla functions syntax
 ## Features
 - Constants
 - Self namespaces
+- Anonymous functions
 - Inline functions
 - Else statements
 - For loops

@@ -39,15 +39,15 @@ namespace MCFunctionExtensions.Features {
 
             const string playerName = "ElseStatement";
 
-            string storePart = $"store success score {playerName} {Program.InternalObjectiveName}";
+            string storePart = $"store success score {playerName} {Program.InternalName}";
 
             if(isPrevExecute) {
-                lines.Add($"scoreboard objectives add {Program.InternalObjectiveName} dummy");
-                lines.Add($"scoreboard players set {playerName} {Program.InternalObjectiveName} 0");
+                lines.Add($"scoreboard objectives add {Program.InternalName} dummy");
+                lines.Add($"scoreboard players set {playerName} {Program.InternalName} 0");
                 lines.Add($"execute {storePart} {prevLine.Substring(8)}");
             }
 
-            string elseStart = $"execute if score {playerName} {Program.InternalObjectiveName} matches 0";
+            string elseStart = $"execute if score {playerName} {Program.InternalName} matches 0";
             string endStore = isNextElse ? $"run execute {storePart} " : "";
             lines.Add($"{elseStart} {endStore}{line.Substring(5)}");
 
