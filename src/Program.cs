@@ -25,6 +25,9 @@ namespace MCFunctionExtensions {
     
     internal static class Program {
         public const string InternalName = "mcfunctionext";
+
+        public const string SourceExtension = ".extmcfunction";
+        public const string LibraryExtension = ".extmclibrary";
         
         private static readonly Dictionary<string, List<string>> postCompileAppend = new();
         private static ulong _globalFunctionId;
@@ -53,9 +56,47 @@ namespace MCFunctionExtensions {
             }
             else options.useNamespace ??= Path.GetFileName(Path.GetDirectoryName(options.functionsPath));
 
+            if(options.libraries.Length > 0) IncludeLibraries(options);
+            else IncludeAllLibraries(options);
+            CompileSource(options);
+        }
+
+        private static void IncludeAllLibraries(Options sourceOptions) {
+            string[] filePaths = Directory.GetFiles(sourceOptions.functionsPath);
+            foreach(string filePath in filePaths)
+                if(Path.GetExtension(filePath) == LibraryExtension)
+                    IncludeLibrary(sourceOptions.functionsPath, sourceOptions.useNamespace, sourceOptions.features,
+                        filePath);
+        }
+
+        private static void IncludeLibraries(Options sourceOptions) {
+            foreach(string library in sourceOptions.libraries)
+                IncludeLibrary(sourceOptions.functionsPath, sourceOptions.useNamespace, sourceOptions.features,
+                    library);
+        }
+
+        private static void IncludeLibrary(string sourcePath, string sourceNamespace, Feature features, string path) {
+            string name = Path.GetFileNameWithoutExtension(path);
+
+            Options options = new() {
+                functionsPath = Path.Join(sourcePath, "libraries", name),
+                useNamespace = sourceNamespace,
+                features = features
+            };
+            IncludeLibrary(options, path);
+        }
+
+        private static void IncludeLibrary(Options options, string path) {
+            string newPath = Path.Join(options.functionsPath,
+                Path.ChangeExtension(Path.GetFileName(path), ".mcfunction"));
+            Directory.CreateDirectory(Path.GetDirectoryName(newPath) ?? string.Empty);
+            File.WriteAllLines(newPath, CompileFunction(options, File.ReadAllLines(path)));
+        }
+
+        private static void CompileSource(Options options) {
             string[] filePaths = Directory.GetFiles(options.functionsPath);
             foreach(string filePath in filePaths)
-                if(Path.GetExtension(filePath) == ".extmcfunction")
+                if(Path.GetExtension(filePath) == SourceExtension)
                     File.WriteAllLines(Path.ChangeExtension(filePath, ".mcfunction"),
                         CompileFunction(options, File.ReadAllLines(filePath)));
             
@@ -70,7 +111,7 @@ namespace MCFunctionExtensions {
             List<string> newLines = new(lines);
 
             foreach((Feature featureEnum, IFeature feature) in features) {
-                if((options.feature & featureEnum) == 0) continue;
+                if((options.features & featureEnum) == 0) continue;
                 IReadOnlyList<string> readLines = new List<string>(newLines);
                 newLines.Clear();
                 feature.Use(readLines, newLines, options);

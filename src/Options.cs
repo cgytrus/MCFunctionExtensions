@@ -13,6 +13,10 @@ namespace MCFunctionExtensions {
 
         [Option('f', "features", Required = false, MetaValue = "ENUM", Default = Feature.All,
             HelpText = "Sets the enabled features of the compiler.")]
-        public Feature feature { get; set; }
+        public Feature features { get; set; }
+        
+        [Option('l', "libs", Required = false, MetaValue = "STRING[]", Default = new string[] { },
+            HelpText = "Libraries to use in the datapack. Get determined automatically if not set.")]
+        public string[] libraries { get; set; }
     }
 }
