@@ -25,6 +25,7 @@ namespace MCFunctionExtensions {
     internal static class Program {
         public const string InternalName = "mcfunctionext";
         
+        private static readonly Dictionary<string, List<string>> postCompileAppend = new();
         private static ulong _globalFunctionId;
 
         private static readonly IReadOnlyDictionary<Feature, IFeature> features =
@@ -55,6 +56,12 @@ namespace MCFunctionExtensions {
                 if(Path.GetExtension(filePath) == ".extmcfunction")
                     File.WriteAllLines(Path.ChangeExtension(filePath, ".mcfunction"),
                         CompileFunction(options, File.ReadAllLines(filePath)));
+            
+            ExecutePostCompileAppend();
+        }
+
+        private static void ExecutePostCompileAppend() {
+            foreach((string path, List<string> lines) in postCompileAppend) File.AppendAllLines(path, lines);
         }
 
         public static IEnumerable<string> CompileFunction(Options options, IEnumerable<string> lines) {
@@ -68,6 +75,15 @@ namespace MCFunctionExtensions {
             }
 
             return newLines;
+        }
+
+        public static bool PostCompileAppend(string functionId, Options options, IEnumerable<string> lines) {
+            string[] splitFunctionId = functionId.Split(':');
+            if(splitFunctionId[0] != options.useNamespace) return false;
+            string path = GetFunctionPath(options.functionsPath, splitFunctionId[1]);
+            if(!postCompileAppend.ContainsKey(functionId)) postCompileAppend[path] = new List<string>();
+            postCompileAppend[path].AddRange(lines);
+            return true;
         }
 
         public static string GetGeneratedFunctionId(string useNamespace, string featureName) =>
