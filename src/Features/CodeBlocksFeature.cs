@@ -16,7 +16,7 @@ namespace MCFunctionExtensions.Features {
             int startLine;
             int inlineDepth;
             try {
-                if(!IsInlineDeclaration(line, out string trimmedLine)) {
+                if(!IsInlineDeclaration(line, out string trimmedDeclaration)) {
                     newLines.Add(line);
                     return;
                 }
@@ -26,28 +26,35 @@ namespace MCFunctionExtensions.Features {
                 inlineDepth = 0;
                 inlineLines.Clear();
                 index++;
-                while(index < readLines.Count) {
-                    line = readLines[index++].TrimStart();
-
-                    if(IsInlineDeclaration(line, out _)) inlineDepth++;
-                    if(IsInlineEnd(line)) {
-                        if(inlineDepth <= 0) {
-                            BlockEnd(options, inlineLines, trimmedLine);
-                            index--;
-                            break;
-                        }
-
-                        inlineDepth--;
-                    }
-
-                    inlineLines.Add(line);
-                }
+                while(index < readLines.Count)
+                    if(ProcessInlineLine(readLines, inlineLines, options, trimmedDeclaration, ref index,
+                        ref inlineDepth))
+                        break;
             }
             catch(FunctionExtensionErrorException ex) {
                 throw new FunctionExtensionErrorException(index + 1, ex.Message, ex);
             }
 
             if(inlineDepth > 0) throw new FunctionExtensionErrorException(startLine + 1, "Braces not closed.");
+        }
+        
+        private bool ProcessInlineLine(IReadOnlyList<string> readLines, ICollection<string> inlineLines, Options options,
+            string trimmedDeclaration, ref int index, ref int inlineDepth) {
+            string line = readLines[index++].TrimStart();
+
+            if(IsInlineDeclaration(line, out _)) inlineDepth++;
+            if(IsInlineEnd(line)) {
+                if(inlineDepth <= 0) {
+                    BlockEnd(options, inlineLines, trimmedDeclaration);
+                    index--;
+                    return true;
+                }
+
+                inlineDepth--;
+            }
+
+            inlineLines.Add(line);
+            return false;
         }
 
         protected abstract void BlockEnd(Options options, IEnumerable<string> inlineLines, string trimmedLine);
