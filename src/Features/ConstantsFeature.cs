@@ -4,6 +4,8 @@ using System.Text;
 
 namespace MCFunctionExtensions.Features {
     public class ConstantsFeature : IFeature {
+        public static IReadOnlyDictionary<string, string> values => constants;
+        
         private static readonly Dictionary<string, string> constants = new();
         
         public void Use(IReadOnlyList<string> readLines, List<string> newLines, Options options) {
@@ -27,6 +29,9 @@ namespace MCFunctionExtensions.Features {
             
             string[] args = line[(prefix.Length + 1)..].Split(' ');
             string constName = args[0];
+
+            if(constants.ContainsKey(constName))
+                throw new FunctionExtensionErrorException(index + 1, $"Value {constName} already defined.");
             
             StringBuilder builder = new();
             for(int i = 1; i < args.Length; i++) {

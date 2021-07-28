@@ -17,7 +17,7 @@ namespace MCFunctionExtensions.Features {
             int startLine;
             int inlineDepth;
             try {
-                if(!IsBlockDeclaration(line, out string trimmedDeclaration)) {
+                if(!IsBlockDeclaration(line, index, out string trimmedDeclaration)) {
                     newLines.Add(line);
                     return;
                 }
@@ -43,7 +43,7 @@ namespace MCFunctionExtensions.Features {
             string trimmedDeclaration, ref int index, ref int inlineDepth) {
             string line = readLines[index++].TrimStart();
 
-            if(IsBlockDeclaration(line, out _)) inlineDepth++;
+            if(IsBlockDeclaration(line, index, out _)) inlineDepth++;
             if(IsBlockEnd(line)) {
                 if(inlineDepth <= 0) {
                     BlockEnd(options, inlineLines, trimmedDeclaration);
@@ -63,7 +63,7 @@ namespace MCFunctionExtensions.Features {
         protected virtual void AddOriginalLine(string line, ICollection<string> newLines) =>
             newLines.Add(line.TrimEnd('{').TrimEnd());
 
-        protected virtual bool IsBlockDeclaration(string line, out string trimmedLine) {
+        protected virtual bool IsBlockDeclaration(string line, int index, out string trimmedLine) {
             trimmedLine = line.TrimEnd();
             bool isBlockDeclaration = trimmedLine.EndsWith("{", StringComparison.InvariantCulture);
             trimmedLine = trimmedLine.TrimEnd('{').TrimEnd();

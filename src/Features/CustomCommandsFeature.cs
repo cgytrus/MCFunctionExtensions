@@ -13,11 +13,14 @@ namespace MCFunctionExtensions.Features {
 
         protected override void AddOriginalLine(string line, ICollection<string> newLines) { }
 
-        protected override bool IsBlockDeclaration(string line, out string trimmedLine) {
+        protected override bool IsBlockDeclaration(string line, int index, out string trimmedLine) {
             const string prefix = "const function";
-            if(!base.IsBlockDeclaration(line, out trimmedLine) ||
+            if(!base.IsBlockDeclaration(line, index, out trimmedLine) ||
                !trimmedLine.StartsWith(prefix, StringComparison.InvariantCulture)) return false;
             trimmedLine = prefix.Length + 1 >= trimmedLine.Length ? "" : trimmedLine[(prefix.Length + 1)..];
+            string name = trimmedLine.Split(' ')[0];
+            if(commands.ContainsKey(name))
+                throw new FunctionExtensionErrorException(index + 1, $"Function {name} already defined.");
             return true;
         }
     }

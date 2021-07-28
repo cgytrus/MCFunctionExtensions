@@ -13,8 +13,8 @@ namespace MCFunctionExtensions.Features {
             File.WriteAllLines(functionPath, Program.CompileFunction(options, inlineLines));
         }
 
-        protected override bool IsBlockDeclaration(string line, out string trimmedLine) {
-            if(!base.IsBlockDeclaration(line, out trimmedLine)) return false;
+        protected override bool IsBlockDeclaration(string line, int index, out string trimmedLine) {
+            if(!base.IsBlockDeclaration(line, index, out trimmedLine)) return false;
             string[] args = trimmedLine.Split(' ');
             if(args[^2] != "function") return false;
             return args[^1].Split(':').Length == 2;
