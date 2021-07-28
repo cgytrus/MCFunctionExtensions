@@ -11,15 +11,15 @@ namespace MCFunctionExtensions.Features {
         public void Use(IReadOnlyList<string> readLines, List<string> newLines, Options options) {
             for(int i = 0; i < readLines.Count; i++) {
                 string line = readLines[i];
-                ProcessLine(newLines, line, i);
+                ProcessLine(newLines, line, i, options);
             }
         }
         
-        private static void ProcessLine(ICollection<string> newLines, string line, int index) {
+        private static void ProcessLine(ICollection<string> newLines, string line, int index, Options options) {
             const string prefix = "const value";
             
             if(!line.StartsWith(prefix, StringComparison.InvariantCulture)) {
-                IEnumerable<string> populatedLines = PopulateLines(line, index);
+                IEnumerable<string> populatedLines = PopulateLines(line, index, options);
                 if(populatedLines is null) newLines.Add(PopulateLine(line));
                 else
                     foreach(string populatedLine in populatedLines)
@@ -49,13 +49,13 @@ namespace MCFunctionExtensions.Features {
             return line;
         }
 
-        private static IEnumerable<string> PopulateLines(string line, int index) {
+        private static IEnumerable<string> PopulateLines(string line, int index, Options options) {
             string[] splitLine = line.Split(' ');
             
             foreach((string name, (string[] args, IList<string> lines)) in CustomCommandsFeature.commands) {
                 IList<string> newLines = new List<string>(lines);
                 if(!TryPopulateLinesWithCustomCommand(index, splitLine, name, args, newLines)) continue;
-                return newLines;
+                return Program.CompileFunction(options, newLines);
             }
 
             return null;
