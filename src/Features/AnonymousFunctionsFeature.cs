@@ -25,7 +25,7 @@ namespace MCFunctionExtensions.Features {
             }
 
             int functionIdIndex = functionCommand.Length + 1;
-            string function = functionIdIndex >= line.Length ? "" :
+            string function = functionIdIndex >= useLine.Length ? "" :
                 useLine[functionIdIndex..].TrimEnd().TrimEnd('{');
             if(!string.IsNullOrWhiteSpace(function)) {
                 newLines.Add(line);
