@@ -32,7 +32,9 @@ namespace MCFunctionExtensions.Features {
                 return;
             }
 
-            string functionId = Program.GetGeneratedFunctionId(options.useNamespace, "anonymous");
+            bool isDeclaration = CodeBlocksFeature.IsBlockStart(line, out _);
+            string functionId = isDeclaration ? Program.GenerateNextFunctionId(options.useNamespace, "anonymous") :
+                Program.lastGeneratedFunctionId;
             newLines.Add(line.Replace(functionCommand, $"{functionCommand} {functionId}"));
         }
     }

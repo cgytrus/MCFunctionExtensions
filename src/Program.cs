@@ -30,6 +30,8 @@ namespace MCFunctionExtensions {
         public const string SourceExtension = ".extmcfunction";
         public const string LibraryExtension = ".extmclibrary";
         
+        public static string lastGeneratedFunctionId { get; private set; }
+        
         private static readonly Dictionary<string, List<string>> postCompileAppend = new();
         private static ulong _globalFunctionId;
 
@@ -131,8 +133,12 @@ namespace MCFunctionExtensions {
             return true;
         }
 
-        public static string GetGeneratedFunctionId(string useNamespace, string featureName) =>
-            $"{useNamespace}:z__{InternalName}/{featureName}/generated_{_globalFunctionId++.ToString(CultureInfo.InvariantCulture)}";
+        public static string GenerateNextFunctionId(string useNamespace, string featureName) {
+            lastGeneratedFunctionId =
+                $"{useNamespace}:z__{InternalName}/{featureName}/generated_{_globalFunctionId.ToString(CultureInfo.InvariantCulture)}";
+            _globalFunctionId++;
+            return lastGeneratedFunctionId;
+        }
 
         public static string GetFunctionPath(string directory, string functionName) =>
             Path.Join(directory, $"{Path.Join(functionName.Split('/'))}.mcfunction");

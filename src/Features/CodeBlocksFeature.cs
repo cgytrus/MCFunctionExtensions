@@ -63,13 +63,16 @@ namespace MCFunctionExtensions.Features {
         protected virtual void AddOriginalLine(string line, ICollection<string> newLines) =>
             newLines.Add(line.TrimEnd('{').TrimEnd());
 
-        protected virtual bool IsBlockDeclaration(string line, int index, out string trimmedLine) {
+        protected virtual bool IsBlockDeclaration(string line, int index, out string trimmedLine) =>
+            IsBlockStart(line, out trimmedLine);
+
+        protected virtual bool IsBlockEnd(string line) => line.Trim() == "}";
+
+        public static bool IsBlockStart(string line, out string trimmedLine) {
             trimmedLine = line.TrimEnd();
             bool isBlockDeclaration = trimmedLine.EndsWith("{", StringComparison.InvariantCulture);
             trimmedLine = trimmedLine.TrimEnd('{').TrimEnd();
             return isBlockDeclaration;
         }
-
-        protected virtual bool IsBlockEnd(string line) => line.Trim() == "}";
     }
 }
