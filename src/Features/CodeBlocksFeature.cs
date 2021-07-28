@@ -43,7 +43,7 @@ namespace MCFunctionExtensions.Features {
             string trimmedDeclaration, ref int index, ref int inlineDepth) {
             string line = readLines[index++].TrimStart();
 
-            if(IsBlockDeclaration(line, index, out _)) inlineDepth++;
+            if(IsBlockStart(line, out _)) inlineDepth++;
             if(IsBlockEnd(line)) {
                 if(inlineDepth <= 0) {
                     BlockEnd(options, inlineLines, trimmedDeclaration);
