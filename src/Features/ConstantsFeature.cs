@@ -44,7 +44,7 @@ namespace MCFunctionExtensions.Features {
 
         private static string PopulateLine(string line) {
             foreach((string name, string value) in constants)
-                line = line.Replace("#!" + name, value);
+                line = line.Replace($"#!({name})", value);
 
             return line;
         }
@@ -79,7 +79,7 @@ namespace MCFunctionExtensions.Features {
 
             for(int i = 0; i < lines.Count; i++)
                 for(int j = 0; j < args.Count; j++)
-                    lines[i] = lines[i].Replace("#$" + args[j], passedArgs[j]);
+                    lines[i] = lines[i].Replace($"#$({args[j]})", passedArgs[j]);
             
             return true;
         }
