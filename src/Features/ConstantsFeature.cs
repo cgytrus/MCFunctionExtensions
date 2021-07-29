@@ -55,7 +55,12 @@ namespace MCFunctionExtensions.Features {
             foreach((string name, (string[] args, IList<string> lines)) in CustomCommandsFeature.commands) {
                 IList<string> newLines = new List<string>(lines);
                 if(!TryPopulateLinesWithCustomCommand(index, splitLine, name, args, newLines)) continue;
-                return Program.CompileFunction(options, newLines);
+                return Program.CompileFunction(new Options {
+                    functionsPath = options.functionsPath,
+                    useNamespace = options.useNamespace,
+                    libraries = options.libraries,
+                    features = options.features & (Feature.CustomCommands | Feature.Constants)
+                }, newLines);
             }
 
             return null;
