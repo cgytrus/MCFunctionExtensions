@@ -11,7 +11,7 @@ namespace MCFunctionExtensions.Features {
             commands[args[0]] = (args[1..], inlineLines.ToList());
         }
 
-        protected override void AddOriginalLine(string line, ICollection<string> newLines) { }
+        protected override void AddOriginalLine(string trimmedLine, ICollection<string> newLines) { }
 
         protected override bool IsBlockDeclaration(string line, int index, out string trimmedLine) {
             const string prefix = "const function";

@@ -22,7 +22,7 @@ namespace MCFunctionExtensions.Features {
                     return;
                 }
 
-                AddOriginalLine(line, newLines);
+                AddOriginalLine(trimmedDeclaration, newLines);
                 startLine = index;
                 inlineDepth = 0;
                 inlineLines.Clear();
@@ -60,8 +60,8 @@ namespace MCFunctionExtensions.Features {
 
         protected abstract void BlockEnd(Options options, IEnumerable<string> inlineLines, string trimmedLine);
 
-        protected virtual void AddOriginalLine(string line, ICollection<string> newLines) =>
-            newLines.Add(line.TrimEnd('{').TrimEnd());
+        protected virtual void AddOriginalLine(string trimmedLine, ICollection<string> newLines) =>
+            newLines.Add(trimmedLine);
 
         protected virtual bool IsBlockDeclaration(string line, int index, out string trimmedLine) =>
             IsBlockStart(line, out trimmedLine);

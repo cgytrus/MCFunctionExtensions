@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MCFunctionExtensions.Features {
@@ -11,6 +12,16 @@ namespace MCFunctionExtensions.Features {
             string functionPath = Program.GetFunctionPath(options.functionsPath, functionId[1]);
             Directory.CreateDirectory(Path.GetDirectoryName(functionPath) ?? string.Empty);
             File.WriteAllLines(functionPath, Program.CompileFunction(options, inlineLines));
+        }
+
+        protected override void AddOriginalLine(string trimmedLine, ICollection<string> newLines) {
+            int keywordIndex = trimmedLine.IndexOf("define ", StringComparison.InvariantCulture);
+            switch(keywordIndex) {
+                case >= 1: base.AddOriginalLine(trimmedLine[..(keywordIndex - 1)], newLines);
+                    break;
+                case < 0: base.AddOriginalLine(trimmedLine, newLines);
+                    break;
+            }
         }
 
         protected override bool IsBlockDeclaration(string line, int index, out string trimmedLine) {
