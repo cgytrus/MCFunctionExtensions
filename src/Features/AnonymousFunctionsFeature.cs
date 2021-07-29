@@ -18,6 +18,7 @@ namespace MCFunctionExtensions.Features {
                 int runIndex = line.IndexOf("run", StringComparison.InvariantCulture);
                 if(runIndex >= 0) useLine = line[(runIndex + 4)..]; // +4 comes from "run" + a space
             }
+            else if(line.StartsWith("define ", StringComparison.InvariantCulture)) useLine = line[7..];
 
             if(!useLine.StartsWith(functionCommand, StringComparison.InvariantCulture)) {
                 newLines.Add(line);
