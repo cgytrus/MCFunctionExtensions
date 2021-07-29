@@ -11,7 +11,7 @@ namespace MCFunctionExtensions {
     [Flags]
     public enum Feature {
         None = 0,
-        All = 0b1111111111,
+        All = -1,
         ElseStatements = 1,
         SelfNamespace = 1 << 1,
         InlineFunctions = 1 << 2,
